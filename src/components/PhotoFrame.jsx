@@ -3,14 +3,16 @@ import { useState } from 'react';
 
 export default function PhotoFrame({ src, hoverSrc, alt, mode = 'color', className = '' }) {
   const [isRevealed, setIsRevealed] = useState(false);
+  const [isTouchReveal, setIsTouchReveal] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
   const [ripples, setRipples] = useState([]);
   const canReveal = mode === 'sketch' && hoverSrc;
   const isSketch = mode === 'sketch';
   const imageFitClass = isSketch ? 'object-contain' : 'object-cover';
 
-  const startReveal = (x, y, withRipples = true) => {
+  const startReveal = (x, y, withRipples = true, isTouch = false) => {
     setMousePos({ x, y });
+    setIsTouchReveal(isTouch);
     setIsRevealed(true);
 
     setRipples(
@@ -35,12 +37,13 @@ export default function PhotoFrame({ src, hoverSrc, alt, mode = 'color', classNa
   const handlePointerEnter = (e) => {
     if (!canReveal || e.pointerType !== 'mouse') return;
     const { x, y } = getPointerPosition(e);
-    startReveal(x, y, true);
+    startReveal(x, y, true, false);
   };
 
   const handlePointerLeave = (e) => {
     if (!canReveal || e.pointerType !== 'mouse') return;
     setIsRevealed(false);
+    setIsTouchReveal(false);
     setRipples([]);
   };
 
@@ -48,20 +51,21 @@ export default function PhotoFrame({ src, hoverSrc, alt, mode = 'color', classNa
     const { x, y } = getPointerPosition(e);
 
     if (canReveal && e.pointerType !== 'mouse') {
-      startReveal(x, y, false);
+      startReveal(x, y, false, true);
     }
   };
 
   const endTouchReveal = (e) => {
     if (!canReveal || e.pointerType === 'mouse') return;
     setIsRevealed(false);
+    setIsTouchReveal(false);
     setRipples([]);
   };
 
   const handleKeyDown = (e) => {
     if (!canReveal || (e.key !== 'Enter' && e.key !== ' ')) return;
     e.preventDefault();
-    isRevealed ? setIsRevealed(false) : startReveal(50, 50);
+    isRevealed ? setIsRevealed(false) : startReveal(50, 50, true, false);
   };
 
   return (
@@ -94,11 +98,13 @@ export default function PhotoFrame({ src, hoverSrc, alt, mode = 'color', classNa
           initial={{ clipPath: 'circle(0% at 50% 50%)' }}
           animate={{
             clipPath: isRevealed
-              ? `circle(150% at ${mousePos.x}% ${mousePos.y}%)`
+              ? isTouchReveal
+                ? 'inset(0%)'
+                : `circle(150% at ${mousePos.x}% ${mousePos.y}%)`
               : `circle(0% at ${mousePos.x}% ${mousePos.y}%)`
           }}
           transition={{
-            duration: 1.2,
+            duration: isTouchReveal ? 0 : 1.2,
             ease: [0.25, 1, 0.5, 1]
           }}
         >
@@ -160,8 +166,8 @@ export default function PhotoFrame({ src, hoverSrc, alt, mode = 'color', classNa
         animate={{ 
           left: `${mousePos.x}%`, 
           top: `${mousePos.y}%`,
-          scale: isRevealed ? [1, 1.5, 1] : 0,
-          opacity: isRevealed ? 0.6 : 0
+          scale: isRevealed && !isTouchReveal ? [1, 1.5, 1] : 0,
+          opacity: isRevealed && !isTouchReveal ? 0.6 : 0
         }}
         style={{ x: '-50%', y: '-50%' }}
       />
