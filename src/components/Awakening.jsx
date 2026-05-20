@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import React, { useEffect } from 'react';
-import { childhoodPhoto } from '../lib/assets.js';
+import { childhoodColorPhoto } from '../lib/assets.js';
 import { useBirthday } from '../context/BirthdayContext.jsx';
 import AudioManager from './AudioManager.jsx';
 import BalloonField from './BalloonField.jsx';
@@ -38,7 +38,7 @@ export default function Awakening() {
           animate={{ filter: 'grayscale(0) brightness(1.08)' }}
           transition={{ duration: 3, ease: [0.16, 1, 0.3, 1] }}
         >
-          <PhotoFrame src={childhoodPhoto} alt="Sri Devi in traditional attire with flowers and bangles" mode="reveal" className="aspect-[4/5]" />
+          <PhotoFrame src={childhoodColorPhoto} alt="Sri Devi in traditional attire with flowers and bangles" mode="reveal" className="aspect-[4/5]" />
         </motion.div>
 
         <div>

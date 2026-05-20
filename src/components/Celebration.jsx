@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { childhoodPhoto } from '../lib/assets.js';
+import { childhoodColorPhoto } from '../lib/assets.js';
 import DigitalHug from './DigitalHug.jsx';
 import PhotoFrame from './PhotoFrame.jsx';
 import StarMap from './StarMap.jsx';
@@ -55,7 +55,7 @@ export default function Celebration() {
             animate={{ scale: [1, 1.025, 1], filter: ['brightness(1)', 'brightness(1.08)', 'brightness(1)'] }}
             transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <PhotoFrame src={childhoodPhoto} alt="Sri Devi as a child" mode="color" className="aspect-[4/5]" />
+            <PhotoFrame src={childhoodColorPhoto} alt="Sri Devi as a child" mode="color" className="aspect-[4/5]" />
             <StarMap />
           </motion.div>
 

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { childhoodPhoto } from '../lib/assets.js';
+import { childhoodColorPhoto, childhoodPhoto } from '../lib/assets.js';
 import { formatTimeUntil } from '../lib/timeGate.js';
 import PhotoFrame from './PhotoFrame.jsx';
 import TypewriterText from './TypewriterText.jsx';
@@ -20,7 +20,13 @@ export default function WaitingRoom({ targetDate, now }) {
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className="mx-auto w-full max-w-md"
         >
-          <PhotoFrame src={childhoodPhoto} alt="Childhood portrait of Sri Devi" mode="sketch" className="aspect-[4/5]" />
+          <PhotoFrame
+            src={childhoodPhoto}
+            hoverSrc={childhoodColorPhoto}
+            alt="Childhood portrait of Sri Devii!"
+            mode="sketch"
+            className="aspect-[4/5]"
+          />
         </motion.div>
 
         <div className="text-center lg:text-left">
@@ -30,7 +36,7 @@ export default function WaitingRoom({ targetDate, now }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.8 }}
           >
-            Sri Devi
+            Sri Deviii!!!
           </motion.p>
           <TypewriterText text="The story of this masterpiece began years ago... The unveiling happens at midnight." />
 

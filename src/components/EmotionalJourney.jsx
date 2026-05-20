@@ -1,6 +1,6 @@
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { childhoodPhoto } from '../lib/assets.js';
+import { childhoodColorPhoto } from '../lib/assets.js';
 import DigitalHug from './DigitalHug.jsx';
 
 const letterParagraphs = [
@@ -87,7 +87,7 @@ function TypedLetter() {
         transition={{ duration: 1.15, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="love-letter-photo" aria-hidden="true">
-          <img src={childhoodPhoto} alt="" />
+          <img src={childhoodColorPhoto} alt="" />
         </div>
         <p className="text-xs uppercase tracking-[0.34em] text-[#8b6b2e]/70">Written with love</p>
         <div className="letter-handwriting mt-8 min-h-[30rem] text-[#2e1c21]/90">
@@ -152,7 +152,7 @@ export default function EmotionalJourney() {
             className="proper-photo-frame mx-auto w-full max-w-[22rem] sm:max-w-[26rem] lg:max-w-[28rem]"
             style={{ scale: heroScale, opacity: heroOpacity, filter: heroBlur, y: heroY }}
           >
-            <img src={childhoodPhoto} alt="Sri Devi" className="h-full w-full object-contain" />
+            <img src={childhoodColorPhoto} alt="Sri Devi" className="h-full w-full object-contain" />
           </motion.div>
           <div>
             <p className="font-serif text-4xl leading-tight text-rose-50 drop-shadow-[0_8px_26px_rgba(0,0,0,0.55)] sm:text-6xl lg:text-7xl">

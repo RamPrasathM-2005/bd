@@ -1,4 +1,5 @@
 export const childhoodPhoto = '/childhood.jpeg';
+export const childhoodColorPhoto = '/childhood_color.jpg';
 
 export const memories = [
   {

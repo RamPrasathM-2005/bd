@@ -235,6 +235,26 @@ button {
   filter: saturate(1.12) contrast(1.04) brightness(1.04);
 }
 
+.hover-color-image {
+  opacity: 0;
+  filter: saturate(1.12) contrast(1.04) brightness(1.04);
+  transition:
+    opacity 0.65s ease,
+    transform 0.65s ease;
+  transform: scale(1.015);
+}
+
+.photo-frame:hover .hover-color-image,
+.photo-frame:focus-within .hover-color-image {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.photo-frame:hover .sketch-lines,
+.photo-frame:focus-within .sketch-lines {
+  opacity: 0.18;
+}
+
 .sketch-lines {
   background-image:
     radial-gradient(circle at 48% 12%, rgba(255, 248, 231, 0.18), transparent 10%),

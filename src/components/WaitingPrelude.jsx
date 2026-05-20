@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import React from 'react';
-import { childhoodPhoto } from '../lib/assets.js';
+import { childhoodColorPhoto, childhoodPhoto } from '../lib/assets.js';
 import { formatCountdown, useBirthday } from '../context/BirthdayContext.jsx';
 import PhotoFrame from './PhotoFrame.jsx';
 import StarfieldCanvas from './StarfieldCanvas.jsx';
@@ -29,12 +29,18 @@ export default function WaitingPrelude() {
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="waiting-aura rounded-[2rem]">
-            <PhotoFrame src={childhoodPhoto} alt="Childhood portrait of Sri Devi" mode="sketch" className="aspect-[4/5]" />
+            <PhotoFrame
+              src={childhoodPhoto}
+              hoverSrc={childhoodColorPhoto}
+              alt="Childhood portrait of Sri Devi"
+              mode="sketch"
+              className="aspect-[4/5]"
+            />
           </div>
         </motion.div>
 
         <div className="text-center lg:text-left">
-          <p className="mb-5 text-xs uppercase tracking-[0.42em] text-celestial/80">Sri Devi</p>
+          <p className="mb-5 text-xs uppercase tracking-[0.42em] text-celestial/80">Sri Devii!</p>
           <TypewriterText text="The countdown starts now. Only a few days to go." />
 
           <div className="mt-9 grid grid-cols-4 gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3 backdrop-blur sm:max-w-xl lg:mx-0">
