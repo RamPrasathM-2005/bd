@@ -9,15 +9,19 @@ export default function PhotoFrame({ src, hoverSrc, alt, mode = 'color', classNa
   const isSketch = mode === 'sketch';
   const imageFitClass = isSketch ? 'object-contain' : 'object-cover';
 
-  const startReveal = (x, y) => {
+  const startReveal = (x, y, withRipples = true) => {
     setMousePos({ x, y });
     setIsRevealed(true);
 
-    setRipples([
-      { id: Date.now(), x, y, delay: 0 },
-      { id: Date.now() + 1, x, y, delay: 0.2 },
-      { id: Date.now() + 2, x, y, delay: 0.4 }
-    ]);
+    setRipples(
+      withRipples
+        ? [
+            { id: Date.now(), x, y, delay: 0 },
+            { id: Date.now() + 1, x, y, delay: 0.2 },
+            { id: Date.now() + 2, x, y, delay: 0.4 }
+          ]
+        : []
+    );
   };
 
   const getPointerPosition = (e) => {
@@ -31,7 +35,7 @@ export default function PhotoFrame({ src, hoverSrc, alt, mode = 'color', classNa
   const handlePointerEnter = (e) => {
     if (!canReveal || e.pointerType !== 'mouse') return;
     const { x, y } = getPointerPosition(e);
-    startReveal(x, y);
+    startReveal(x, y, true);
   };
 
   const handlePointerLeave = (e) => {
@@ -44,7 +48,7 @@ export default function PhotoFrame({ src, hoverSrc, alt, mode = 'color', classNa
     const { x, y } = getPointerPosition(e);
 
     if (canReveal && e.pointerType !== 'mouse') {
-      startReveal(x, y);
+      startReveal(x, y, false);
     }
   };
 
