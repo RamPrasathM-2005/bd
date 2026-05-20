@@ -1,73 +1,114 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 
-export default function PhotoFrame({ src, hoverSrc, alt, className = '' }) {
-  const [isHovered, setIsHovered] = useState(false);
+export default function PhotoFrame({ src, hoverSrc, alt, mode = 'color', className = '' }) {
+  const [isRevealed, setIsRevealed] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
   const [ripples, setRipples] = useState([]);
+  const canReveal = mode === 'sketch' && hoverSrc;
+  const isSketch = mode === 'sketch';
+  const imageFitClass = isSketch ? 'object-contain' : 'object-cover';
 
-  const handleMouseEnter = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    
+  const startReveal = (x, y) => {
     setMousePos({ x, y });
-    setIsHovered(true);
+    setIsRevealed(true);
 
-    // Create 3 immediate shockwave ripples
-    const newRipples = [
+    setRipples([
       { id: Date.now(), x, y, delay: 0 },
       { id: Date.now() + 1, x, y, delay: 0.2 },
-      { id: Date.now() + 2, x, y, delay: 0.4 },
-    ];
-    setRipples(newRipples);
+      { id: Date.now() + 2, x, y, delay: 0.4 }
+    ]);
   };
 
-  const handleMouseLeave = () => {
-    setIsHovered(false);
+  const getPointerPosition = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    return {
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100
+    };
+  };
+
+  const handlePointerEnter = (e) => {
+    if (!canReveal || e.pointerType !== 'mouse') return;
+    const { x, y } = getPointerPosition(e);
+    startReveal(x, y);
+  };
+
+  const handlePointerLeave = (e) => {
+    if (!canReveal || e.pointerType !== 'mouse') return;
+    setIsRevealed(false);
     setRipples([]);
+  };
+
+  const handlePointerDown = (e) => {
+    const { x, y } = getPointerPosition(e);
+
+    if (canReveal && e.pointerType !== 'mouse') {
+      startReveal(x, y);
+    }
+  };
+
+  const endTouchReveal = (e) => {
+    if (!canReveal || e.pointerType === 'mouse') return;
+    setIsRevealed(false);
+    setRipples([]);
+  };
+
+  const handleKeyDown = (e) => {
+    if (!canReveal || (e.key !== 'Enter' && e.key !== ' ')) return;
+    e.preventDefault();
+    isRevealed ? setIsRevealed(false) : startReveal(50, 50);
   };
 
   return (
     <motion.figure
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
+      onPointerDown={handlePointerDown}
+      onPointerUp={endTouchReveal}
+      onPointerCancel={endTouchReveal}
+      onKeyDown={handleKeyDown}
+      role={canReveal ? 'button' : undefined}
+      tabIndex={canReveal ? 0 : undefined}
+      aria-pressed={canReveal ? isRevealed : undefined}
       className={`proper-photo-frame group relative isolate overflow-hidden bg-[#06111f] shadow-2xl ${className}`}
       style={{ perspective: 1000 }}
-      whileHover={{ scale: 1.02 }}
+      whileHover={canReveal ? { scale: 1.02 } : undefined}
       transition={{ duration: 0.4 }}
     >
       {/* 1. BASE LAYER: The Sketch (Always in background) */}
       <img
         src={src}
         alt={alt}
-        className="h-full w-full object-cover sketch-image transition-transform duration-700"
+        className={`h-full w-full ${imageFitClass} ${isSketch ? 'sketch-image' : 'color-image'} transition-transform duration-700`}
       />
 
       {/* 2. REVEAL LAYER: The Color Image (Expands to cover everything) */}
-      <motion.div
-        className="absolute inset-0 z-10"
-        initial={{ clipPath: 'circle(0% at 50% 50%)' }}
-        animate={{ 
-          clipPath: isHovered 
-            ? `circle(150% at ${mousePos.x}% ${mousePos.y}%)` 
-            : `circle(0% at ${mousePos.x}% ${mousePos.y}%)` 
-        }}
-        transition={{ 
-          duration: 1.2, 
-          ease: [0.25, 1, 0.5, 1] // Smooth liquid easing
-        }}
-      >
-        <img
-          src={hoverSrc || src}
-          alt=""
-          className="h-full w-full object-cover color-bleed-image"
-        />
-      </motion.div>
+      {canReveal && (
+        <motion.div
+          className="absolute inset-0 z-10"
+          initial={{ clipPath: 'circle(0% at 50% 50%)' }}
+          animate={{
+            clipPath: isRevealed
+              ? `circle(150% at ${mousePos.x}% ${mousePos.y}%)`
+              : `circle(0% at ${mousePos.x}% ${mousePos.y}%)`
+          }}
+          transition={{
+            duration: 1.2,
+            ease: [0.25, 1, 0.5, 1]
+          }}
+        >
+          <img
+            src={hoverSrc}
+            alt=""
+            className={`h-full w-full ${imageFitClass} color-bleed-image`}
+          />
+        </motion.div>
+      )}
 
       {/* 3. RIPPLE EFFECTS: Expanding "Water" Rings */}
       <AnimatePresence>
-        {isHovered && ripples.map((ripple) => (
+        {isRevealed && ripples.map((ripple) => (
           <motion.span
             key={ripple.id}
             className="pointer-events-none absolute z-20 rounded-full border-2 border-white/30"
@@ -95,7 +136,9 @@ export default function PhotoFrame({ src, hoverSrc, alt, className = '' }) {
       </AnimatePresence>
 
       {/* 4. OVERLAYS (Your CSS classes) */}
-      <div className={`sketch-lines absolute inset-0 z-30 pointer-events-none transition-opacity duration-700 ${isHovered ? 'opacity-10' : 'opacity-40'}`} />
+      {isSketch && (
+        <div className={`sketch-lines absolute inset-0 z-30 pointer-events-none transition-opacity duration-700 ${isRevealed ? 'opacity-10' : 'opacity-40'}`} />
+      )}
       
       {/* Moving Shimmer Light */}
       <motion.div
@@ -113,8 +156,8 @@ export default function PhotoFrame({ src, hoverSrc, alt, className = '' }) {
         animate={{ 
           left: `${mousePos.x}%`, 
           top: `${mousePos.y}%`,
-          scale: isHovered ? [1, 1.5, 1] : 0,
-          opacity: isHovered ? 0.6 : 0
+          scale: isRevealed ? [1, 1.5, 1] : 0,
+          opacity: isRevealed ? 0.6 : 0
         }}
         style={{ x: '-50%', y: '-50%' }}
       />
