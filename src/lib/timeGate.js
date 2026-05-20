@@ -1,5 +1,5 @@
-export const BIRTHDAY_MONTH_INDEX = 4; // May. JavaScript months are zero-based: January is 0, May is 4.
-export const BIRTHDAY_DAY = 19;
+export const BIRTHDAY_MONTH_INDEX = 7; // May. JavaScript months are zero-based: January is 0, May is 4.
+export const BIRTHDAY_DAY = 10;
 
 // For testing only:
 // Set this to a date string like '2026-05-20T00:01:00' to force the Celebration state.

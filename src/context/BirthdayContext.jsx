@@ -9,8 +9,8 @@ export const PHASES = {
   THE_JOURNEY: 'THE_JOURNEY'
 };
 
-export const BIRTHDAY_MONTH_INDEX = 4; // August. JavaScript months are zero-based: January is 0, August is 7.
-export const BIRTHDAY_DAY = 19;
+export const BIRTHDAY_MONTH_INDEX = 7; // August. JavaScript months are zero-based: January is 0, August is 7.
+export const BIRTHDAY_DAY = 10;
 export const BIRTHDAY_HOUR = 0;
 export const BIRTHDAY_MINUTE = 0;
 
