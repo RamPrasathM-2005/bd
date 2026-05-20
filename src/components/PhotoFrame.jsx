@@ -34,6 +34,15 @@ export default function PhotoFrame({ src, hoverSrc, alt, mode = 'color', classNa
     };
   };
 
+  const getTouchPosition = (e) => {
+    const touch = e.touches[0] || e.changedTouches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+    return {
+      x: ((touch.clientX - rect.left) / rect.width) * 100,
+      y: ((touch.clientY - rect.top) / rect.height) * 100
+    };
+  };
+
   const handlePointerEnter = (e) => {
     if (!canReveal || e.pointerType !== 'mouse') return;
     const { x, y } = getPointerPosition(e);
@@ -51,12 +60,29 @@ export default function PhotoFrame({ src, hoverSrc, alt, mode = 'color', classNa
     const { x, y } = getPointerPosition(e);
 
     if (canReveal && e.pointerType !== 'mouse') {
+      e.preventDefault();
       startReveal(x, y, false, true);
     }
   };
 
   const endTouchReveal = (e) => {
     if (!canReveal || e.pointerType === 'mouse') return;
+    e.preventDefault();
+    setIsRevealed(false);
+    setIsTouchReveal(false);
+    setRipples([]);
+  };
+
+  const handleTouchStart = (e) => {
+    if (!canReveal) return;
+    e.preventDefault();
+    const { x, y } = getTouchPosition(e);
+    startReveal(x, y, false, true);
+  };
+
+  const handleTouchEnd = (e) => {
+    if (!canReveal) return;
+    e.preventDefault();
     setIsRevealed(false);
     setIsTouchReveal(false);
     setRipples([]);
@@ -75,12 +101,16 @@ export default function PhotoFrame({ src, hoverSrc, alt, mode = 'color', classNa
       onPointerDown={handlePointerDown}
       onPointerUp={endTouchReveal}
       onPointerCancel={endTouchReveal}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+      onContextMenu={(e) => e.preventDefault()}
       onKeyDown={handleKeyDown}
       role={canReveal ? 'button' : undefined}
       tabIndex={canReveal ? 0 : undefined}
       aria-pressed={canReveal ? isRevealed : undefined}
       className={`proper-photo-frame group relative isolate overflow-hidden bg-[#06111f] shadow-2xl ${className}`}
-      style={{ perspective: 1000 }}
+      style={{ perspective: 1000, WebkitTouchCallout: 'none', userSelect: 'none', touchAction: 'none' }}
       whileHover={canReveal ? { scale: 1.02 } : undefined}
       transition={{ duration: 0.4 }}
     >
@@ -88,6 +118,7 @@ export default function PhotoFrame({ src, hoverSrc, alt, mode = 'color', classNa
       <img
         src={src}
         alt={alt}
+        draggable="false"
         className={`h-full w-full ${imageFitClass} ${isSketch ? 'sketch-image' : 'color-image'} transition-transform duration-700`}
       />
 
@@ -111,6 +142,7 @@ export default function PhotoFrame({ src, hoverSrc, alt, mode = 'color', classNa
           <img
             src={hoverSrc}
             alt=""
+            draggable="false"
             className={`h-full w-full ${imageFitClass} color-bleed-image`}
           />
         </motion.div>
